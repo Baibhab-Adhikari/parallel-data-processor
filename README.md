@@ -8,6 +8,9 @@ The core of the project is a decoupled processing engine that uses Python's mult
 
 In data science, it's common to have a large DataFrame (millions of rows) and need to apply a complex, custom Python function to every single row. The standard way to do this, `df.apply(..., axis=1)`, is notoriously slow because it's single-threaded and can't take advantage of modern multi-core CPUs.
 
+![Dashboard Screenshot](results.png)
+_The Streamlit dashboard showing the performance benchmark and EDA._
+
 This project was built to move beyond the theory of multiprocessing and provide a hands-on, practical demonstration of:
 
 - **Identifying a Bottleneck**: We use a df.apply() task that takes over 70 seconds to run serially.
@@ -26,12 +29,13 @@ This project was built to move beyond the theory of multiprocessing and provide 
 
 ## 💻 Tech Stack
 
-- **Core**: Python 3.9+
+- **Core**: Python 3.12+
 - **Data Processing**: pandas, numpy
 - **Parallelism**: multiprocessing (via concurrent.futures)
 - **Dashboard**: streamlit
 - **Visualization**: plotly
 - **File I/O**: pyarrow (for Parquet), openpyxl (for Excel)
+- **Package Manager**: uv
 
 ## 🔧 How to Benchmark Your Own Dataset
 
@@ -56,10 +60,10 @@ def process(df: pd.DataFrame) -> pd.DataFrame:
     REPLACE THIS with your own slow, CPU-bound task.
     e.g., a complex df.apply(), a slow string operation, etc.
     """
-    
+
     def my_slow_function(row):
-        # Your custom logic here
-        return row['col_a'] * 100 + row['col_b']
+        # Your custom logic here ...
+        return "your result"
 
     df['new_column'] = df.apply(my_slow_function, axis=1)
     return df
@@ -74,9 +78,9 @@ Open `main.py` and change the `DATA_PATH` variable to point to your new file.
 ...
 def main() -> None:
     # Point this to your dataset
-    DATA_PATH = "data/my_data.parquet" 
-    
-    # You may also need to change the read function if using CSV
+    DATA_PATH = "data/my_data.parquet"
+
+    # You may also need to change the read function if using CSV/Excel etc...
     df: pd.DataFrame = pd.read_parquet(DATA_PATH)
     ...
 ```
@@ -86,7 +90,7 @@ def main() -> None:
 From your terminal, run the "factory" script. This will do all the heavy lifting and can take several minutes.
 
 ```bash
-python main.py
+uv run main.py
 ```
 
 This will generate a new `benchmark_results.json` file based on your data and your task.
@@ -110,24 +114,17 @@ git clone https://github.com/your-username/parallel-data-processor.git
 cd parallel-data-processor
 ```
 
-Create and activate a virtual environment:
+Install dependencies using `uv`:
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-```
-
-Install the required packages:
-
-```bash
-pip install -r requirements.txt
+uv sync
 ```
 
 Run the initial benchmark:
 (This will use the default NYC Taxi dataset)
 
 ```bash
-python main.py
+uv run main.py
 ```
 
 Run the Streamlit app:
