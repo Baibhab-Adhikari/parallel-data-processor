@@ -106,7 +106,7 @@ with st.spinner(f"Loading benchmark dataset ({DATA_PATH}) for EDA..."):
         start_load = time.time()
         df = pd.read_parquet(DATA_PATH)
 
-        # --- FIX for PyArrow Error (from previous step) ---
+        # --- FIX for PyArrow Error---
         if 'tpep_pickup_datetime' in df.columns:
             df['tpep_pickup_datetime'] = pd.to_datetime(
                 df['tpep_pickup_datetime'])
